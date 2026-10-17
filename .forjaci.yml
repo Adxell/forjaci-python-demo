@@ -1,0 +1,49 @@
+version: 1
+
+on:
+  push:
+    branches: [main]
+  manual: true
+
+policy:
+  require_digest: true
+
+steps:
+  - name: test
+    image: python:3.13-slim@sha256:70729b46c69b4f1e97c4822c1af3df53a1476cf5ddc6c087c0c10bc3a5678c2f
+    run:
+      - python -m venv /tmp/venv
+      - "/tmp/venv/bin/pip install --require-hashes --only-binary=:all: -r requirements-dev.txt"
+      - /tmp/venv/bin/python -m pytest -q
+    network:
+      egress: [pypi.org, files.pythonhosted.org]
+    cache: [pip]
+
+  - name: image
+    depends_on: [test]
+    build_image:
+      context: .
+      dockerfile: Dockerfile
+      tag: app
+    sign: true
+    sbom: true
+
+  - name: scan
+    depends_on: [image]
+    image: anchore/grype:v0.120.1@sha256:e4a44ef45d285b829ce6efe2642980329661bd2d18eab5fc539138d4adaebbbe
+    command: [/grype, "sbom:/workspace/.forjaci/sbom/image.spdx.json", --fail-on, critical]
+    network:
+      egress: [grype.anchore.io]
+    cache: [grype-db]
+
+  # To deploy, enroll a deployment agent named "prod" for this project
+  # (forjaci agent create prod --project <project>) and uncomment:
+  #
+  # - name: deploy
+  #   depends_on: [scan]
+  #   when: { branch: main }
+  #   deploy:
+  #     target: prod
+  #     service: python-demo
+  #     port: 8080
+  #     healthcheck: /healthz

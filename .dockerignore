@@ -1,0 +1,6 @@
+.git
+.forjaci
+tests
+__pycache__
+*.pyc
+.pytest_cache
