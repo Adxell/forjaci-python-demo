@@ -35,6 +35,8 @@ steps:
     network:
       egress: [grype.anchore.io]
     cache: [grype-db]
+    env:
+      GRYPE_CHECK_FOR_APP_UPDATE: "false"
 
   # To deploy, enroll a deployment agent named "prod" for this project
   # (forjaci agent create prod --project <project>) and uncomment:

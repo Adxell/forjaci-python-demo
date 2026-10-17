@@ -3,7 +3,7 @@ FROM python:3.13-slim@sha256:70729b46c69b4f1e97c4822c1af3df53a1476cf5ddc6c087c0c
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8080
 WORKDIR /srv
 COPY app/ app/
-RUN useradd --system --uid 10001 --no-create-home app
+RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
 USER 10001
 EXPOSE 8080
 CMD ["python", "-m", "app.server"]
