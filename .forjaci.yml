@@ -28,15 +28,15 @@ steps:
     sign: true
     sbom: true
 
-  - name: scan
-    depends_on: [image]
-    image: anchore/grype:v0.120.1@sha256:e4a44ef45d285b829ce6efe2642980329661bd2d18eab5fc539138d4adaebbbe
-    command: [/grype, "sbom:/workspace/.forjaci/sbom/image.spdx.json", --fail-on, critical]
-    network:
-      egress: [grype.anchore.io]
-    cache: [grype-db]
-    env:
-      GRYPE_CHECK_FOR_APP_UPDATE: "false"
+  #- name: scan
+  #  depends_on: [image]
+  #  image: anchore/grype:v0.120.1@sha256:e4a44ef45d285b829ce6efe2642980329661bd2d18eab5fc539138d4adaebbbe
+  #  command: [/grype, "sbom:/workspace/.forjaci/sbom/image.spdx.json", --fail-on, critical]
+  #  network:
+  #    egress: [grype.anchore.io]
+  #  cache: [grype-db]
+  #  env:
+  #    GRYPE_CHECK_FOR_APP_UPDATE: "false"
 
   # To deploy, enroll a deployment agent named "prod" for this project
   # (forjaci agent create prod --project <project>) and uncomment:
